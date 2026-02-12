@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Is Detayi | Pars Merge Studio{% endblock %}
+
+{% block content %}
+<section class="panel" data-live-jobs data-job-detail-id="{{ job.id }}">
+    <div class="row-between wrap">
+        <div>
+            <p class="eyebrow">Is Detayi</p>
+            <h1>{{ job.name }}</h1>
+            <p class="muted">Olusturma: {{ job.created_at|date:"d.m.Y H:i" }}</p>
+        </div>
+        <span class="status status-{{ job.status }}" data-job-status>{{ job.status|upper }}</span>
+    </div>
+
+    <div class="form-errors {% if not job.error_message %}is-hidden{% endif %}" data-job-error>{{ job.error_message }}</div>
+
+    <p class="muted {% if job.status != 'pending' and job.status != 'running' %}is-hidden{% endif %}" data-job-progress>
+        Islem devam ediyor. Durum otomatik guncellenir.
+    </p>
+
+    <div class="job-actions" data-job-actions>
+        <a
+            class="btn primary {% if not job.output_file_name %}is-hidden{% endif %}"
+            data-job-download
+            href="{% url 'video_merge:job_download' job.id %}"
+        >
+            Ciktiyi Indir
+        </a>
+        <form
+            method="post"
+            action="{% url 'video_merge:job_retry' job.id %}"
+            data-job-retry-form
+            class="{% if job.status != 'failed' %}is-hidden{% endif %}"
+        >
+            {% csrf_token %}
+            <button type="submit" class="btn primary">Yeniden Kuyruga Al</button>
+        </form>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Video Sirasi</h2>
+    {% if job.clips %}
+        <ol class="clip-list">
+            {% for clip in job.clips %}
+                <li>
+                    <span class="clip-order">{{ clip.order }}</span>
+                    <span>{{ clip.original_name }}</span>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p class="muted">Bu is icin video bulunamadi.</p>
+    {% endif %}
+    <a href="{% url 'video_merge:dashboard' %}" class="btn ghost">Panele Don</a>
+</section>
+{% endblock %}

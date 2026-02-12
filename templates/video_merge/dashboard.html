@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Panel | Pars Merge Studio{% endblock %}
+
+{% block content %}
+<section class="hero panel">
+    <div>
+        <p class="eyebrow">Video Pipeline</p>
+        <h1>Video birlestirme islemlerini tek panelden yonetin</h1>
+        <p class="muted">Dosyalarinizi sirayla yukleyin. Sistem FFmpeg ile ciktiyi olusturup sadece size ait olacak sekilde saklar.</p>
+    </div>
+</section>
+
+<section class="panel form-panel">
+    <h2>Yeni Is Olustur</h2>
+    <form method="post" enctype="multipart/form-data" class="stack" data-upload-form>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <label class="field">
+            <span>{{ form.name.label }}</span>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <small class="error">{{ form.name.errors|join:", " }}</small>
+            {% endif %}
+        </label>
+
+        <div class="field upload-field">
+            <span>{{ form.files.label }}</span>
+            <div class="upload-shell">
+                <div class="upload-actions">
+                    <div class="upload-action-left">
+                        <button type="button" class="btn ghost" data-pick-files>Video Sec</button>
+                        <span class="hint" data-file-count>Secili dosya: 0</span>
+                    </div>
+                    <div class="view-toggle" role="group" aria-label="Dosya gorunum secimi">
+                        <button type="button" class="btn ghost btn-sm is-active" data-view-mode="list">Liste</button>
+                        <button type="button" class="btn ghost btn-sm" data-view-mode="grid">Simge</button>
+                    </div>
+                </div>
+                <div class="upload-dropzone" data-dropzone>
+                    Dosyalari buraya surukle birak veya "Video Sec" ile ekle
+                </div>
+                <div class="native-file-input" data-native-input-wrapper>
+                    {{ form.files }}
+                </div>
+                <div class="selected-files" data-file-list></div>
+                <p class="muted file-empty-state" data-file-empty-state>Henuz video secilmedi.</p>
+            </div>
+            {% if form.files.errors %}
+                <small class="error">{{ form.files.errors|join:", " }}</small>
+            {% endif %}
+            <small class="hint">Ayni anda birden fazla dosya secilebilir. Sonradan ekleme ve kaldirma yapabilirsiniz.</small>
+            <small class="hint">Desteklenen uzantilar: .ts, .mp4, .avi, .mkv, .mov, .wmv</small>
+        </div>
+
+        <button type="submit" class="btn primary">Birlestirmeyi Baslat</button>
+    </form>
+</section>
+
+<section class="panel" data-live-jobs>
+    <div class="row-between">
+        <h2>Is Gecmisi</h2>
+    </div>
+    {% if jobs %}
+        <div class="job-grid">
+            {% for job in jobs %}
+                <article class="job-card" data-job-card-id="{{ job.id }}">
+                    <header>
+                        <h3>{{ job.name }}</h3>
+                        <span class="status status-{{ job.status }}" data-job-status>{{ job.status|upper }}</span>
+                    </header>
+                    <p class="muted">{{ job.created_at|date:"d.m.Y H:i" }}</p>
+                    <p class="error-line {% if not job.error_message %}is-hidden{% endif %}" data-job-error>{{ job.error_message|truncatechars:120 }}</p>
+                    <a class="btn ghost" href="{% url 'video_merge:job_detail' job.id %}">Detay</a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">Henuz bir is olusturmadiniz.</p>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block page_scripts %}
+    {{ block.super }}
+    <script src="{% static 'video_merge/upload_selector.js' %}" defer></script>
+{% endblock %}

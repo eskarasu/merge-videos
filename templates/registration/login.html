@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Giris | Pars Merge Studio{% endblock %}
+
+{% block content %}
+<section class="panel auth-panel">
+    <p class="eyebrow">Kimlik Dogrulama</p>
+    <h1>Hesabiniza giris yapin</h1>
+
+    <form method="post" class="stack">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <label class="field">
+            <span>Kullanici Adi</span>
+            {{ form.username }}
+        </label>
+
+        <label class="field">
+            <span>Sifre</span>
+            {{ form.password }}
+        </label>
+
+        <button type="submit" class="btn primary">Giris Yap</button>
+    </form>
+    <p class="muted">Hesabiniz yoksa <a href="{% url 'video_merge:signup' %}">kayit olun</a>.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Kayit Ol | Pars Merge Studio{% endblock %}
+
+{% block content %}
+<section class="panel auth-panel">
+    <p class="eyebrow">Yeni Kullanici</p>
+    <h1>Hesap olustur</h1>
+
+    <form method="post" class="stack">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <label class="field">
+            <span>Kullanici Adi</span>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <small class="error">{{ form.username.errors|join:", " }}</small>
+            {% endif %}
+        </label>
+
+        <label class="field">
+            <span>E-posta</span>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <small class="error">{{ form.email.errors|join:", " }}</small>
+            {% endif %}
+        </label>
+
+        <label class="field">
+            <span>Sifre</span>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <small class="error">{{ form.password1.errors|join:", " }}</small>
+            {% endif %}
+        </label>
+
+        <label class="field">
+            <span>Sifre (Tekrar)</span>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <small class="error">{{ form.password2.errors|join:", " }}</small>
+            {% endif %}
+        </label>
+
+        <button type="submit" class="btn primary">Kayit Ol</button>
+    </form>
+</section>
+{% endblock %}
